@@ -1,33 +1,26 @@
-<?php
-//require_once('C:\wamp64\www\register1\layouts\header.php');
-?>
+<?php error_reporting(0); ?>
 <?php
     include_once  'db.php';
-
     $do = trim(strip_tags($_GET['do']));
     if ($do == 'save') {
         $title = trim($_POST['title']);
-
         $res = $db->prepare("INSERT IGNORE INTO tests (`title`) VALUES (:title)");
         $res->execute([
             ':title' => $title,
         ]);
         $testId = $db->lastInsertId();
-
         $questionNum = 1;
         while (isset($_POST['question_' . $questionNum])) {
             $question = trim($_POST['question_' . $questionNum]);
             if (empty($question)) {
                 continue;
             }
-
             $res = $db->prepare("INSERT IGNORE INTO questions (`test_id`, `question`) VALUES (:test_id, :question)");
             $res->execute([
                 ':test_id' => $testId,
                 ':question' => $question,
             ]);
             $questionId = $db->lastInsertId();
-
             $answerNum = 1;
             while (isset($_POST['answer_text_' . $questionNum . '_' . $answerNum])) {
                 $answer = trim($_POST['answer_text_' . $questionNum . '_' . $answerNum]);
@@ -35,7 +28,6 @@
                 if (empty($answer)) {
                     continue;
                 }
-
                 $res = $db->prepare("INSERT IGNORE INTO answers (`question_id`, `answer`, `score`) 
                                     VALUES (:question_id, :answer, :score)");
                 $res->execute([
@@ -48,13 +40,11 @@
             }
             $questionNum++;
         }
-
         $resultNum = 1;
         while (isset($_POST['result_' . $resultNum])) {
             $result = trim($_POST['result_' . $resultNum]);
             $scoreMin = trim($_POST['result_score_min_' . $resultNum]);
             $scoreMax = trim($_POST['result_score_max_' . $resultNum]);
-
             $res = $db->prepare("INSERT IGNORE INTO results (`test_id`, `score_min`, `score_max`, `result`) 
                                     VALUES (:test_id, :score_min, :score_max, :result)");
             $res->execute([
@@ -63,19 +53,16 @@
                 ':score_max' => $scoreMax,
                 ':result' => $result,
             ]);
-
             $resultNum++;
         }
-
         header ('Location: admin.php?do=list');
     }
-
     if ($do != 'add') {
         $do = 'list';
     }
 ?>
 
-<!doctype html>
+<!Doctype html>
 <html lang="ua">
 <head>
     <meta charset="UTF-8">
