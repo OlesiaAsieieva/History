@@ -1,37 +1,28 @@
-<?php
-//require_once('C:\wamp64\www\register1\layouts\header.php');
-?>
+<?php error_reporting(0); ?>
 <?php
     include_once  'db.php';
      session_start();
-
-//require_once('C:\wamp64\www\register1\layouts\header.php');
 $id = (int) $_GET['id'];
     if ($id < 1) {
         header ('location: admin.php');
     }
-
     $testId = $id;
     if (!isset($_SESSION['test_id']) || $_SESSION['test_id'] != $testId) {
         $_SESSION['test_id'] = $testId;
         $_SESSION['test_score'] = 0;
     }
-
     $res = $db->query("SELECT * FROM tests WHERE id = {$testId}");
     $row = $res->fetch();
     $testTitle = $row['title'];
-
     $questionNum = (int) $_POST['q'];
     if (empty($questionNum)) {
         $questionNum = 0;
     }
     $questionNum++;
     $questionStart = $questionNum - 1;
-
     $res = $db->query("SELECT count(*) AS count FROM questions WHERE test_id = {$testId}");
     $row = $res->fetch();
     $questionCount = $row['count'];
-
     $answerId = (int) $_POST['answer_id'];
     if (!empty($answerId)) {
         $res = $db->query("SELECT * FROM answers WHERE id = {$answerId}");
@@ -39,11 +30,9 @@ $id = (int) $_GET['id'];
         $score = $row['score'];
         $_SESSION['test_score'] += $score;
     }
-
     $showForm = 0;
     if ($questionCount >= $questionNum) {
         $showForm = 1;
-
         $res = $db->query("SELECT * FROM questions WHERE test_id = {$testId} LIMIT {$questionStart}, 1");
         $row = $res->fetch();
         $question = $row['question'];
@@ -53,13 +42,12 @@ $id = (int) $_GET['id'];
         $answers = $res->fetchAll();
     } else {
         $score = $_SESSION['test_score'];
-
         $res = $db->query("SELECT * FROM results WHERE test_id = {$testId} AND score_min <= {$score} AND score_max >= {$score}");
         $row = $res->fetch();
         $result = $row['result'];
     }
 ?>
-<!doctype html>
+<!Doctype html>
 
 <html lang="ru">
 <head>
@@ -97,7 +85,7 @@ $id = (int) $_GET['id'];
                         </div>
                         <div class="text-center mt-3">
                             <?php if ($questionCount == $questionNum) { ?>
-                                <button type="submit" class="btn btn-success">Отримати результат</button>
+                                <button type="submit" class="btn btn-success">Завершити тест</button>
                             <?php } else { ?>
                                 <button type="submit" class="btn btn-primary">Далі</button>
                             <?php } ?>
